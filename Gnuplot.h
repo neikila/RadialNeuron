@@ -13,10 +13,11 @@
 #include "NeuralNet.h"
 
 using namespace std;
+extern double pauseTime;
 
 class Gnuplot {
 private:
-    ofstream script;
+    ofstream* script;
     int setAmount;
     vector<string> setNames;
     vector<string> colors = {"green", "red", "blue"};
@@ -33,22 +34,23 @@ public:
 
         setAmount = 0;
 
-        script = ofstream();
-        script.open(filename);
+        script = new ofstream();
+        script->open(filename);
     }
 
     ~Gnuplot() {
-        script.close();
+        *script << "pause -1;";
+        script->close();
     }
 
     void prepare() {
-        script << "set xlabel \"x1\";" << endl <<
+        *script << "set xlabel \"x1\";" << endl <<
                   "set ylabel \"x2\";" << endl <<
                   "set xrange [-" << multiplierX << ":" << multiplierX << "];" << endl <<
                   "set yrange [-" << multiplierY << ":" << multiplierY << "];" << endl <<
                   "set colorbox vertical user origin .02,.1 size .04,.8;" << endl <<
                   "set view 0,0;" << endl <<
-                  "set term qt;" << endl <<
+                  "set term x11;" << endl <<
                   "set parametric;" << endl <<
                   "unset ztics;" << endl;
     }
@@ -74,20 +76,20 @@ public:
 
     void plotNeuron(NeuralNet net) {
         Neuron n = net[0];
-        script << "fx(t)=" << n.getCenter()[0] << "+" << n.getRadius()[0] << "*cos(t)" << endl
+        *script << "fx(t)=" << n.getCenter()[0] << "+" << n.getRadius()[0] << "*cos(t)" << endl
                << "fy(t)=" << n.getCenter()[1] << "+" << n.getRadius()[1] << "*sin(t)" << endl;
 
-        script << "plot '" << setNames[0] << "' notitle w p pt 8 lc rgb '"
+        *script << "plot '" << setNames[0] << "' notitle w p pt 8 lc rgb '"
                           << colors[0] << "'";
 
         for (int i = 1; i < setNames.size(); ++i) {
-            script << ",\\" << endl << "     '"
+            *script << ",\\" << endl << "     '"
                    << setNames[i] << "' notitle w p pt 8 lc rgb '"
                    << colors[i] << "'";
         }
-        script << ",\\" << endl << "      fx(t),fy(t) notitle";
-        script << ";" << endl
-               << "pause 0.2;" << endl;
+        *script << ",\\" << endl << "      fx(t),fy(t) notitle";
+        *script << ";" << endl
+               << "pause " << pauseTime << ";" << endl;
     }
 };
 

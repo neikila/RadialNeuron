@@ -8,9 +8,20 @@
 
 using namespace std;
 
-double multiplierX = 10;
-double multiplierY = 10;
-double kLearning = 1;
+// double multiplierX = 100;
+// double multiplierY = 100;
+// double kLearning = 5;
+// int iterationsAmount = 20000;
+// double pauseTime = 0.02;
+
+double multiplierX = 100;
+double multiplierY = 100;
+double kLearning = 5;
+int iterationsAmount = 700;
+double pauseTime = 0.01;
+
+double startX = 36;
+double startY = 48;
 
 Gnuplot plotter("result.gpl", multiplierX, multiplierY);
 
@@ -22,10 +33,10 @@ double count(vector<NPoint>& points, NeuralNet& net) {
 }
 
 int main() {
-    NeuralNet net(Neuron(NPoint(2.78061, 5.00458), NPoint(1, 1)));
+    NeuralNet net(Neuron(NPoint(27.8061, 50.0458), NPoint(10, 10)));
     cout << net << endl;
 
-    DataSource source("C:\\Users\\k.neyman\\ClionProjects\\NeiroNets\\data\\input\\sigmo25.txt",
+    DataSource source("/home/ws/RadialNeuron/data/input/sigmo23.txt",
                       multiplierX, multiplierY);
 
     vector<NPoint> points;
@@ -52,12 +63,23 @@ int main() {
 
     double prev = -2;
     double actual = 0;
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < iterationsAmount; ++i) {
         net.evolve(points, result);
         plotter.plotNeuron(net);
         actual = count(points, net);
         cout << "Iteration #" << ++i << " is over. Diff:" << actual - prev << endl;
     }
+
+    net.correct(points, result);
+    plotter.plotNeuron(net);
+    plotter.plotNeuron(net);
+    plotter.plotNeuron(net);
+    plotter.plotNeuron(net);
+
+    for (int j = 0; j < correctPoints.size(); ++j) {
+        cout << correctPoints[j] << endl;
+    }
+
 //    double prev = -2;
 //    double actual = 0;
 //    int i = 0;

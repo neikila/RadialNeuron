@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -56,6 +57,16 @@ public:
 
         return result;
     }
+
+    NPoint abs () {
+        NPoint result;
+        vector<double>::iterator it = coords.begin();
+        for(; it != coords.end(); ++it)
+            result.coords.push_back(fabs(*it));
+
+        return result;
+    }
+
     void set(int i, double val) { coords[i] = val; }
 
     double operator[] (const int i) { return coords[i]; }

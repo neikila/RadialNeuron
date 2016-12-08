@@ -52,6 +52,12 @@ public:
             pNeurons->adjust(points, error);
     }
 
+    void correct(vector<NPoint>& points, vector<double> results) {
+        vector<Neuron>::iterator pNeurons = neurons.begin();
+        for (; pNeurons != neurons.end(); ++pNeurons)
+            pNeurons->correct(points, results);
+    }
+
     friend ostream& operator<<(ostream& os, NeuralNet& net);
 };
 

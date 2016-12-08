@@ -67,6 +67,66 @@ public:
         rads.set(j, rads[j] - kLearning * diffs.second);
     }
 
+    void correct(vector<NPoint>& points, vector<double>& result) {
+        vector<NPoint> pointsNotIncluded = notIncl(points, result);
+        cout << "Size: " << pointsNotIncluded.size() << endl;
+
+        cout << *this << endl;
+        NPoint toIncl = max(pointsNotIncluded);
+        NPoint backupRads = rads;
+        adjustRad(toIncl);
+        cout << *this << endl;
+        cout << "Size: " << notIncl(points, result).size() << endl;
+    }
+
+    vector<NPoint> notIncl(vector<NPoint>& points, vector<double>& result) {
+        vector<NPoint>::iterator p = points.begin();
+        vector<double>::iterator pResult = result.begin();
+
+        vector<NPoint> pointsNotIncluded;
+//        vector<NPoint> badPoints;
+
+        for(; p != points.end(); ++p, ++pResult) {
+            if (*pResult > 0.5) {
+                if (!isIn(*p))
+                    pointsNotIncluded.push_back(*p);
+            }
+        }
+        return pointsNotIncluded;
+    }
+
+    void adjustRad(NPoint &point) {
+        while(!isIn(point)) {
+            vector<double> newRads;
+            vector<double>::iterator p = rads.getCoords().begin();
+            for (; p != rads.getCoords().end(); ++p) {
+                newRads.push_back(*p * 1.05);
+                cout << *this << endl;
+            }
+            rads = NPoint(newRads);
+        }
+    }
+
+    NPoint& max(vector<NPoint> &points) {
+        vector<NPoint>::iterator p = points.begin();
+
+        NPoint& min = points.front();
+        double minValue = norma(min);
+
+        for(++p; p != points.end(); ++p) {
+            double temp = norma(*p);
+            if (temp > minValue) {
+                min = *p;
+                minValue = temp;
+            }
+        }
+        return min;
+    }
+
+    bool isIn(NPoint& point) {
+        return norma(point) <= 1;
+    }
+
     friend ostream& operator<<(ostream& os, Neuron& neuron);
 };
 
